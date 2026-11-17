@@ -1,11 +1,27 @@
 ﻿namespace CarolineLoveProject2.Model
 {
+    /// <summary>
+    /// The letter generator class that handles the list of chosen letters and chooses which
+    /// letters go into the chosen letters.
+    /// </summary>
     public class LetterGenerator
     {
         private Random? _rand;
 
+        /// <summary>
+        /// The letter bag property.
+        /// </summary>
+        /// <value>
+        /// The letter bag.
+        /// </value>
         public List<string> LetterBag { get; set; }
 
+        /// <summary>
+        /// The chosen letters property.
+        /// </summary>
+        /// <value>
+        /// The chosen letters.
+        /// </value>
         public string? ChosenLetters { get; set; }
 
         /// <summary>
@@ -13,7 +29,7 @@
         /// </summary>
         public LetterGenerator()
         {
-            LetterBag = ["j","k","q","x","z", "b", "b","c","c","f",
+            LetterBag = ["j","k","q","x","z","b","b","c","c","f",
                 "f","g","g","m","m","p","p","v","v","d","d","d","u",
                 "u","u","w","w","w","y","y","y","l","l","l","l","h",
                 "h","h","h","h","r","r","r","r","r","a","a","a","a",
@@ -23,6 +39,9 @@
                 "e","e","e","e","e","e","e","e","e"];
         }
 
+        /// <summary>
+        /// Populates the list of chosen letters from the letter bag.
+        /// </summary>
         public void PopulateChosenLetters()
         {
             _rand = new();
