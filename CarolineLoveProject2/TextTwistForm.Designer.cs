@@ -28,18 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
+            chosenLettersLabel = new Label();
             SuspendLayout();
+            // 
+            // chosenLettersLabel
+            // 
+            chosenLettersLabel.AutoSize = true;
+            chosenLettersLabel.Location = new Point(213, 215);
+            chosenLettersLabel.Name = "chosenLettersLabel";
+            chosenLettersLabel.Size = new Size(50, 20);
+            chosenLettersLabel.TabIndex = 0;
+            chosenLettersLabel.Text = "label1";
             // 
             // TextTwistForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(chosenLettersLabel);
             Name = "TextTwistForm";
             Text = "Text Twist by Love";
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private Label chosenLettersLabel;
     }
 }
