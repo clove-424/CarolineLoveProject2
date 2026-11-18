@@ -8,7 +8,7 @@ namespace CarolineLoveProject2.Dictionary
     public class Dictionary
     {
         /// <summary>
-        /// The letter property.
+        /// The letter property from dictionary.json
         /// </summary>
         /// <value>
         /// The letter.
@@ -17,7 +17,7 @@ namespace CarolineLoveProject2.Dictionary
         public string? Letter { get; set; }
 
         /// <summary>
-        /// The list of words property.
+        /// The list of words property from dictionary.json
         /// </summary>
         /// <value>
         /// The words.

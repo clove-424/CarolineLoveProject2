@@ -44,17 +44,19 @@
         /// </summary>
         public void PopulateChosenLetters()
         {
+            const int maxWordLength = 7;
             _rand = new();
 
             var letters = "";
-            while (letters.Length < 7)
+            while (letters.Length < maxWordLength)
             {
                 var index = _rand.Next(LetterBag.Count);
-                if (!letters.Contains(LetterBag[index]))
+                var currentLetter = LetterBag[index];
+                if (!letters.Contains(currentLetter))
                 {
-                    letters += LetterBag[index];
+                    letters += currentLetter;
                 }
-                LetterBag.RemoveAt(index);
+                LetterBag.Remove(currentLetter);
             }
 
             ChosenLetters = letters;

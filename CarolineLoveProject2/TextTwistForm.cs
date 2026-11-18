@@ -1,5 +1,5 @@
-using CarolineLoveProject2.Dictionary;
 using CarolineLoveProject2.Model;
+using CarolineLoveProject2.Word;
 
 namespace CarolineLoveProject2
 {
@@ -11,7 +11,7 @@ namespace CarolineLoveProject2
     {
         private readonly LetterGenerator _letterGenerator;
 
-        private readonly WordValidator _validator;
+        private readonly Validator _validator;
 
         private readonly List<Button> _letterButtons;
 
@@ -63,58 +63,65 @@ namespace CarolineLoveProject2
 
         private void Letter1Button_Click(object sender, EventArgs e)
         {
-            AddToTextBox(0);
+            const int firstButtonIdx = 0;
+            AddToTextBox(firstButtonIdx);
         }
 
         private void Letter2Button_Click(object sender, EventArgs e)
         {
-            AddToTextBox(1);
+            const int firstButtonIdx = 1;
+            AddToTextBox(firstButtonIdx);
         }
 
         private void Letter3Button_Click(object sender, EventArgs e)
         {
-            AddToTextBox(2);
+            const int firstButtonIdx = 2;
+            AddToTextBox(firstButtonIdx);
         }
 
         private void Letter4Button_Click(object sender, EventArgs e)
         {
-            AddToTextBox(3);
+            const int firstButtonIdx = 3;
+            AddToTextBox(firstButtonIdx);
         }
 
         private void Letter5Button_Click(object sender, EventArgs e)
         {
-            AddToTextBox(4);
+            const int firstButtonIdx = 4;
+            AddToTextBox(firstButtonIdx);
         }
 
         private void Letter6Button_Click(object sender, EventArgs e)
         {
-            AddToTextBox(5);
+            const int firstButtonIdx = 5;
+            AddToTextBox(firstButtonIdx);
         }
 
         private void Letter7Button_Click(object sender, EventArgs e)
         {
-            AddToTextBox(6);
+            const int firstButtonIdx = 6;
+            AddToTextBox(firstButtonIdx);
         }
 
         private void SubmitButton_Click(object sender, EventArgs e)
         {
+            var displayedWord = activeWordTextBox.Text;
             try
             {
-                _validator.Validate(activeWordTextBox.Text);
-                if (!_validator.IsValidWord)
+                if (_validator.WordInSubmittedWords(displayedWord))
                 {
-                    notValidWordLabel.Visible = true;
+                    notValidWordLabel.Text = "Already submitted that word, submit another.";
                 }
                 else
                 {
-                    notValidWordLabel.Visible = false;
+                    notValidWordLabel.Text = "Not a valid word.";
                 }
-
-                notValidWordLabel.Text = "Not a valid word";
+                _validator.Validate(displayedWord);
+                notValidWordLabel.Visible = !_validator.IsValidWord;
             }
             catch (Exception)
             {
-                notValidWordLabel.Text = "Please enter a valid word";
+                notValidWordLabel.Text = "Please enter a valid word.";
                 notValidWordLabel.Visible = true;
             }
 
@@ -130,8 +137,8 @@ namespace CarolineLoveProject2
             {
                 var lastChar = displayedText[^1].ToString();
                 var newText = displayedText.Replace(lastChar, "");
-
                 activeWordTextBox.Text = newText;
+
                 foreach (var button in _letterButtons)
                 {
                     if (lastChar.Equals(button.Text))
