@@ -41,10 +41,12 @@
 
         /// <summary>
         /// Populates the list of chosen letters from the letter bag.
+        /// The value set for ChosenLetters guarantees the user gets at least one vowel.
         /// </summary>
         public void PopulateChosenLetters()
         {
             const int maxWordLength = 7;
+
             _rand = new();
 
             var letters = "";
@@ -59,7 +61,41 @@
                 LetterBag.Remove(currentLetter);
             }
 
-            ChosenLetters = letters;
+            ChosenLetters = GetLettersSetWithVowels(letters);
+        }
+
+        private string GetLettersSetWithVowels(string letters)
+        {
+            const string vowels = "aeiou";
+            var vowelsFound = false;
+            foreach (var ch in letters.ToLower())
+            {
+                foreach (var v in vowels)
+                {
+                    vowelsFound = ch.Equals(v);
+                    if (vowelsFound)
+                    {
+                        break;
+                    }
+                }
+
+                if (vowelsFound)
+                {
+                    break;
+                }
+            }
+
+            if (!vowelsFound)
+            {
+                var lettersSeed = _rand.Next(letters.Length);
+                var vowelSeed = _rand.Next(vowels.Length);
+
+                var newString = letters.Replace(letters[lettersSeed], vowels[vowelSeed]);
+
+                return newString;
+            }
+
+            return letters;
         }
     }
 }

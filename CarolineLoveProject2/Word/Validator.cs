@@ -2,6 +2,10 @@
 
 namespace CarolineLoveProject2.Word
 {
+    /// <summary>
+    /// The word validator class that goes through the dictionary, determines whether a word is in
+    /// the dictionary and/or valid, and sorts the word into a designated list.
+    /// </summary>
     public class Validator
     {
         private const string DictionaryJson = "Dictionary/dictionary.json";
@@ -30,7 +34,13 @@ namespace CarolineLoveProject2.Word
         /// </value>
         public bool IsValidWord { get; set; }
 
-        public List<string> AllSubmittedWords { get; set; }
+        /// <summary>
+        /// The property indicating whether a word is in the dictionary.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if a word is in the dictionary; otherwise, <c>false</c>.
+        /// </value>
+        public bool InDictionary { get; set; }
 
         /// <summary>
         /// Initializes a new instance of a word validator.
@@ -38,7 +48,6 @@ namespace CarolineLoveProject2.Word
         public Validator()
         {
             SubmittedValidWords = [];
-            AllSubmittedWords = [];
 
             try
             {
@@ -59,13 +68,13 @@ namespace CarolineLoveProject2.Word
         public void Validate(string word)
         {
             IsValidWord = false;
-            foreach (var pair in LetterWordPairs)
+            foreach (var dictionary in LetterWordPairs)
             {
-                var letter = pair.Letter.ToLower();
+                var letter = dictionary.Letter.ToLower();
                 var firstLetter = word[0].ToString();
                 if (letter.Equals(firstLetter))
                 {
-                    IterateOverWordsUnderLetter(pair, word.ToLower());
+                    CheckIfWordIsValid(dictionary, word);
                 }
 
                 if (IsValidWord)
@@ -75,12 +84,11 @@ namespace CarolineLoveProject2.Word
             }
 
         }
-
-        private void IterateOverWordsUnderLetter(Dictionary.Dictionary pair, string wordToCheck)
+        private void CheckIfWordIsValid(Dictionary.Dictionary dictionary, string wordToCheck)
         {
-            foreach (var word in pair.Words)
+            foreach (var word in dictionary.Words)
             {
-                if (WordIsValid(word.ToLower(), wordToCheck.ToLower()))
+                if (WordIsValid(word, wordToCheck))
                 {
                     SubmittedValidWords.Add(word);
                     IsValidWord = true;
@@ -90,10 +98,50 @@ namespace CarolineLoveProject2.Word
             }
         }
 
-        private bool WordIsValid(string wordInList, string wordToCheck)
+        /// <summary>
+        /// Iterates over dictionary.json and determines of a word is found in it.
+        /// </summary>
+        /// <param name="word">The word to find in the dictionary</param>
+        public void IterateOverLettersInDictionary(string word)
+        {
+            InDictionary = false;
+            foreach (var dictionary in LetterWordPairs)
+            {
+                var letter = dictionary.Letter.ToLower();
+                var firstLetter = word[0].ToString();
+                if (letter.Equals(firstLetter))
+                {
+                    CheckIfWordInDictionary(dictionary, word);
+                }
+
+                if (InDictionary)
+                {
+                    break;
+                }
+            }
+        }
+
+        private void CheckIfWordInDictionary(Dictionary.Dictionary dictionary, string wordToCheck)
+        {
+            foreach (var word in dictionary.Words)
+            {
+                if (WordsAreEqual(word, wordToCheck))
+                {
+                    InDictionary = true;
+                    break;
+                }
+            }
+        }
+
+        private static bool WordsAreEqual(string word1, string word2)
+        {
+            return word1.ToLower().Equals(word2.ToLower());
+        }
+
+        private bool WordIsValid(string wordInDictionary, string wordToCheck)
         {
             const int minimumWordLength = 3;
-            return wordInList.Equals(wordToCheck) && wordInList.Length >= minimumWordLength 
+            return WordsAreEqual(wordInDictionary, wordToCheck) && wordToCheck.Length >= minimumWordLength 
                                                   && !WordInSubmittedWords(wordToCheck);
         }
 
@@ -107,9 +155,9 @@ namespace CarolineLoveProject2.Word
             var inSubmittedWords = false;
             foreach (var word in SubmittedValidWords)
             {
-                if (word.ToLower().Equals(wordToCheck.ToLower()))
+                inSubmittedWords = WordsAreEqual(word, wordToCheck);
+                if (inSubmittedWords)
                 {
-                    inSubmittedWords = true;
                     break;
                 }
             }

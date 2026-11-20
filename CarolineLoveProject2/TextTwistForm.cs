@@ -1,5 +1,7 @@
+using System.Runtime.CompilerServices;
 using CarolineLoveProject2.Model;
 using CarolineLoveProject2.Word;
+using Timer = System.Windows.Forms.Timer;
 
 namespace CarolineLoveProject2
 {
@@ -9,9 +11,13 @@ namespace CarolineLoveProject2
     /// <seealso cref="System.Windows.Forms.Form" />
     public partial class TextTwistForm : Form
     {
-        private readonly LetterGenerator _letterGenerator;
+        private readonly Timer _appTimer;
+        private int _currentTime;
 
+        private readonly LetterGenerator _letterGenerator;
         private readonly Validator _validator;
+
+        private readonly List<WordTracker> _allSubmittedWords;
 
         private readonly List<Button> _letterButtons;
 
@@ -22,12 +28,18 @@ namespace CarolineLoveProject2
         {
             InitializeComponent();
 
+            _appTimer = new();
+            _appTimer.Interval = 1000;
+            _appTimer.Tick += TimerOnTick;
+
+            StartTimer();
+
             _letterGenerator = new LetterGenerator();
             _letterGenerator.PopulateChosenLetters();
 
             _letterButtons =
             [
-                letter1Button, letter2Button, letter3Button, letter4Button, 
+                letter1Button, letter2Button, letter3Button, letter4Button,
                 letter5Button, letter6Button, letter7Button
             ];
 
@@ -38,8 +50,34 @@ namespace CarolineLoveProject2
                 button.Text = letter.ToString();
             }
 
+            _allSubmittedWords = [];
+
             _validator = new();
             notValidWordLabel.Visible = false;
+        }
+
+        private void StartTimer()
+        {
+            ResetTimer();
+            _appTimer.Start();
+        }
+
+        private void ResetTimer()
+        {
+            _currentTime = 120;
+            timeRemainingLabel.Text = _currentTime.ToString();
+        }
+
+        private void TimerOnTick(object? sender, EventArgs e)
+        {
+            _currentTime--;
+            timeRemainingLabel.Text = _currentTime.ToString();
+
+            if (_currentTime <= 0)
+            {
+                _appTimer.Stop();
+                ChangeStateOfLetterButtons(false);
+            }
         }
 
         private void AddToTextBox(int index)
@@ -48,17 +86,17 @@ namespace CarolineLoveProject2
             _letterButtons[index].Enabled = false;
         }
 
-        private void EnableAllLetterButtons()
+        private void ChangeStateOfLetterButtons(bool state)
         {
             foreach (var button in _letterButtons)
             {
-                button.Enabled = true;
+                button.Enabled = state;
             }
         }
         private void ClearTextBoxButton_Click(object sender, EventArgs e)
         {
             activeWordTextBox.Text = "";
-            EnableAllLetterButtons();
+            ChangeStateOfLetterButtons(true);
         }
 
         private void Letter1Button_Click(object sender, EventArgs e)
@@ -105,19 +143,15 @@ namespace CarolineLoveProject2
 
         private void SubmitButton_Click(object sender, EventArgs e)
         {
-            var displayedWord = activeWordTextBox.Text;
             try
             {
-                if (_validator.WordInSubmittedWords(displayedWord))
+                var displayedWord = activeWordTextBox.Text;
+
+                if (!string.IsNullOrEmpty(displayedWord))
                 {
-                    notValidWordLabel.Text = "Already submitted that word, submit another.";
+                    var wordInvalidReason = GetReasonWordIsInvalid(displayedWord);
+                    AddWordToCollections(new WordTracker(displayedWord, wordInvalidReason));
                 }
-                else
-                {
-                    notValidWordLabel.Text = "Not a valid word.";
-                }
-                _validator.Validate(displayedWord);
-                notValidWordLabel.Visible = !_validator.IsValidWord;
             }
             catch (Exception)
             {
@@ -126,7 +160,39 @@ namespace CarolineLoveProject2
             }
 
             activeWordTextBox.Text = "";
-            EnableAllLetterButtons();
+            ChangeStateOfLetterButtons(true);
+            UpdateWordListBox();
+        }
+
+        private string GetReasonWordIsInvalid(string word)
+        {
+            var wordInvalidReason = "";
+            _validator.IterateOverLettersInDictionary(word);
+            if (word.Length < 3)
+            {
+                notValidWordLabel.Text = "Word is not long enough.";
+                wordInvalidReason = "Not Long Enough";
+            }
+            else if (!_validator.InDictionary)
+            {
+                notValidWordLabel.Text = "Not a valid word.";
+                wordInvalidReason = "Not Found in Dictionary";
+            }
+            else if (_validator.WordInSubmittedWords(word))
+            {
+                notValidWordLabel.Text = "Already submitted that word, \nsubmit another one.";
+                wordInvalidReason = "Duplicate Word";
+            }
+
+            return wordInvalidReason;
+        }
+
+        private void AddWordToCollections(WordTracker trackedWord)
+        {
+            _validator.Validate(trackedWord.Word);
+            _allSubmittedWords.Add(trackedWord);
+
+            notValidWordLabel.Visible = !_validator.IsValidWord;
         }
 
         private void UndoButton_Click(object sender, EventArgs e)
@@ -147,6 +213,17 @@ namespace CarolineLoveProject2
                     }
                 }
             }
+        }
+
+        private void UpdateWordListBox()
+        {
+            wordTrackerListBox.DataSource = null;
+            wordTrackerListBox.Items.Clear();
+            wordTrackerListBox.DataSource = _allSubmittedWords;
+
+            validWordsListBox.DataSource = null;
+            validWordsListBox.Items.Clear();
+            validWordsListBox.DataSource = _validator.SubmittedValidWords;
         }
     }
 }
