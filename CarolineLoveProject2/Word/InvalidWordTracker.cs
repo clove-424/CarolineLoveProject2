@@ -11,6 +11,7 @@ namespace CarolineLoveProject2.Word
         /// The reason a word is invalid.
         /// </value>
         [JsonPropertyName("Reason")]
+        [JsonPropertyOrder(2)]
         public string ReasonInvalid { get; set; }
 
         /// <summary>

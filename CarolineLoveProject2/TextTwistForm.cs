@@ -1,4 +1,7 @@
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using CarolineLoveProject2.Model;
+using CarolineLoveProject2.View;
 using CarolineLoveProject2.Word;
 using Timer = System.Windows.Forms.Timer;
 
@@ -11,10 +14,13 @@ namespace CarolineLoveProject2
     public partial class TextTwistForm : Form
     {
         private readonly Timer _appTimer;
+        private int _startTime;
         private int _currentTime;
+        private int _roundNumber;
 
         private readonly LetterGenerator _letterGenerator;
         private readonly Validator _validator;
+        private readonly List<Round> _rounds;
 
         private readonly List<Button> _letterButtons;
 
@@ -34,43 +40,45 @@ namespace CarolineLoveProject2
                 letter5Button, letter6Button, letter7Button
             ];
 
-            for (var i = 0; i < _letterButtons.Count; i++)
-            {
-                var button = _letterButtons[i];
-                var letter = _letterGenerator.ChosenLetters?[i];
-                button.Text = letter.ToString();
-            }
+            AssignLettersToButtons(_letterGenerator.ChosenLetters);
 
             _validator = new();
             notValidWordLabel.Visible = false;
+
+            _roundNumber = 1;
+            _rounds = [];
 
             _appTimer = new();
             _appTimer.Interval = 1000;
             _appTimer.Tick += TimerOnTick;
 
-            StartRound();
+            CurrentlyPlayingGame(false);
         }
 
-        private void StartRound()
+        private void StartButton_Click(object sender, EventArgs e)
+        {
+            _currentTime = 60;
+            _startTime = _currentTime;
+            StartRound(_currentTime);
+        }
+
+        private void StartRound(int time)
         {
             _validator.ValidWords.Clear();
-            validWordsListBox.DataSource = null;
-            validWordsListBox.Items.Clear();
-
             _validator.InvalidWords.Clear();
-            invalidWordsListBox.DataSource = null;
-            invalidWordsListBox.Items.Clear();
 
+            if (_roundNumber > 1)
+            {
+                _letterGenerator.PopulateChosenLetters();
+                AssignLettersToButtons(_letterGenerator.ChosenLetters);
+            }
+
+            activeWordTextBox.Text = "";
+            pointsEarnedLabel.Text = "";
             CurrentlyPlayingGame(true);
 
-            ResetTimer();
+            timeRemainingLabel.Text = time.ToString();
             _appTimer.Start();
-        }
-
-        private void ResetTimer()
-        {
-            _currentTime = 60;  //TODO: dynamically set time to whatever player chooses
-            timeRemainingLabel.Text = _currentTime.ToString();
         }
 
         private void TimerOnTick(object? sender, EventArgs e)
@@ -80,9 +88,25 @@ namespace CarolineLoveProject2
 
             if (_currentTime <= 0)
             {
+                notValidWordLabel.Text = "";
+
                 _appTimer.Stop();
                 CurrentlyPlayingGame(false);
-                UpdateWordListBox();
+
+                Round round = new(_validator)
+                {
+                    MaxTime = _startTime,
+                    Score = CalculateRoundScore(),
+                    RoundNumber = _roundNumber
+                };
+                _rounds.Add(round);
+                round.SaveSubmittedWords();
+
+                PopulateRoundSummaryTextbox();
+
+                exportStatsToolStripMenuItem.Enabled = _rounds.Count > 1;
+
+                _roundNumber++;
             }
         }
 
@@ -91,6 +115,7 @@ namespace CarolineLoveProject2
             undoButton.Enabled = inPlay;
             submitButton.Enabled = inPlay;
             clearTextBoxButton.Enabled = inPlay;
+            textTwistButton.Enabled = inPlay;
             ChangeStateOfLetterButtons(inPlay);
         }
 
@@ -195,7 +220,6 @@ namespace CarolineLoveProject2
 
             activeWordTextBox.Text = "";
             ChangeStateOfLetterButtons(true);
-            UpdateWordListBox();
         }
 
         private void ProcessWordData(string word)
@@ -243,7 +267,7 @@ namespace CarolineLoveProject2
             }
             else if (_validator.WordInSubmittedWords(word))
             {
-                notValidWordLabel.Text = "Already submitted that word, \nsubmit another one.";
+                notValidWordLabel.Text = "Already submitted that word.";
                 wordInvalidReason = "Duplicate Word";
             }
 
@@ -255,15 +279,105 @@ namespace CarolineLoveProject2
             return !_validator.InDictionary || _validator.WordInSubmittedWords(word) || word.Length < 3;
         }
 
-        private void UpdateWordListBox()
+        private void PopulateRoundSummaryTextbox()
         {
-            validWordsListBox.DataSource = null;
-            validWordsListBox.Items.Clear();
-            validWordsListBox.DataSource = _validator.ValidWords;
+            var output = "Round Results:\t" + Environment.NewLine + Environment.NewLine;
 
-            invalidWordsListBox.DataSource = null;
-            invalidWordsListBox.Items.Clear();
-            invalidWordsListBox.DataSource = _validator.InvalidWords;
+            output += SortedWordsToSummary() + Environment.NewLine;
+            output += "Total Score: " + CalculateRoundScore();
+
+            roundSummaryTextBox.Text = output + Environment.NewLine;
+        }
+
+        private string SortedWordsToSummary()
+        {
+            List<(string Word, int PointValue)> allWords = [];
+            foreach (var word in _validator.ValidWords)
+            {
+                allWords.Add(new(word.Word, word.PointValue));
+            }
+            foreach (var word in _validator.InvalidWords)
+            {
+                allWords.Add(new(word.Word, 0));
+            }
+
+            var sortedWordsByPoints = allWords.OrderByDescending(points => points.PointValue)
+                .ThenBy(word => word.Word);
+
+            var output = "Word\tPoints Earned" + Environment.NewLine;
+            foreach (var currentWord in sortedWordsByPoints)
+            {
+                output += $"{currentWord.Word}\t\t{currentWord.PointValue}" + Environment.NewLine;
+            }
+
+            return output;
+        }
+
+        private int CalculateRoundScore()
+        {
+            var score = 0;
+            foreach (var word in _validator.ValidWords)
+            {
+                score += word.PointValue;
+            }
+
+            return score;
+        }
+
+        private void SetTimeMenuItem_Click(object sender, EventArgs e)
+        {
+            var chooseTimeForm = new ChooseTimeForm();
+            chooseTimeForm.ShowDialog();
+
+            _startTime = chooseTimeForm.CurrentTime;
+            _currentTime = _startTime;
+            StartRound(_currentTime);
+
+            pointsEarnedLabel.Text = "";
+        }
+
+        private void ExportStatsMenuItem_Click(object sender, EventArgs e)
+        {
+            var saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "JSON files (*.json)|*.json";
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                var filePath = saveFileDialog.FileName;
+                var json = JsonSerializer.Serialize(_rounds, new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                });
+                File.WriteAllText(filePath, json);
+                MessageBox.Show($"Successfully exported {_rounds.Count} rounds.", "Success",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void TextTwistButton_Click(object sender, EventArgs e)
+        {
+            _letterGenerator.ChosenLetters = _letterGenerator.TwistLetters();
+            AssignLettersToButtons(_letterGenerator.ChosenLetters);
+
+            foreach (var button in _letterButtons)
+            {
+                button.Enabled = true;
+                if (activeWordTextBox.Text.Contains(button.Text))
+                {
+                    button.Enabled = false;
+                }
+            }
+        }
+
+        private void AssignLettersToButtons(string chosenLetters)
+        {
+            for (var i = 0; i < _letterButtons.Count; i++)
+            {
+                var button = _letterButtons[i];
+                var letter = chosenLetters[i];
+                button.Text = letter.ToString();
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ namespace CarolineLoveProject2.Word
         /// The points earned per word.
         /// </value>
         [JsonPropertyName("Point Value")]
+        [JsonPropertyOrder(2)]
         public int PointValue { get; set; }
 
         /// <summary>

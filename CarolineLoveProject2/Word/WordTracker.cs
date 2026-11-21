@@ -11,6 +11,7 @@ namespace CarolineLoveProject2.Word
         /// The word.
         /// </value>
         [JsonPropertyName("Word")]
+        [JsonPropertyOrder(1)]
         public string Word { get; set; }
 
         /// <summary>
@@ -20,6 +21,7 @@ namespace CarolineLoveProject2.Word
         /// The time added.
         /// </value>
         [JsonPropertyName("Time Word was Added")]
+        [JsonPropertyOrder(3)]
         public int TimeAdded { get; set; }
 
         /// <summary>

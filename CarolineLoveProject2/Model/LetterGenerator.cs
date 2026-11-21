@@ -6,11 +6,11 @@
     /// </summary>
     public class LetterGenerator
     {
-        private const int _maxWordLength = 7;
+        private const int MaxWordLength = 7;
 
-        private Random? _rand;
+        private readonly Random _rand;
 
-        private string? _letters;
+        private string _letters;
 
         /// <summary>
         /// The letter bag property.
@@ -26,13 +26,16 @@
         /// <value>
         /// The chosen letters.
         /// </value>
-        public string? ChosenLetters { get; set; }
+        public string ChosenLetters { get; set; }
 
         /// <summary>
         /// Creates an instance of a letter generator and populates LetterBag with 
         /// </summary>
         public LetterGenerator()
         {
+            _rand = new();
+            _letters = "";
+
             LetterBag = ["j","k","q","x","z","b","b","c","c","f",
                 "f","g","g","m","m","p","p","v","v","d","d","d","u",
                 "u","u","w","w","w","y","y","y","l","l","l","l","h",
@@ -49,20 +52,19 @@
         /// </summary>
         public void PopulateChosenLetters()
         {
-            _rand = new();
-
-            _letters = "";
-            while (_letters.Length < _maxWordLength)
+            var letters = "";
+            while (letters.Length < MaxWordLength)
             {
                 var index = _rand.Next(LetterBag.Count);
                 var currentLetter = LetterBag[index];
-                if (!_letters.Contains(currentLetter))
+                if (!letters.Contains(currentLetter))
                 {
-                    _letters += currentLetter;
+                    letters += currentLetter;
                 }
                 LetterBag.Remove(currentLetter);
             }
 
+            _letters = letters;
             ChosenLetters = GetLettersSetWithVowels(_letters);
         }
 
@@ -100,20 +102,19 @@
             return newString;
         }
 
-        //public string TwistLetters()
-        //{
-        //    var seed = _rand.Next(_letters.Length);
+        public string TwistLetters()
+        {
+            var prevOrder = _letters.ToList();
+            var reorderedLetters = "";
+            while (reorderedLetters.Length < MaxWordLength)
+            {
+                var index = _rand.Next(prevOrder.Count);
+                var currentLetter = prevOrder[index];
+                reorderedLetters += currentLetter;
+                prevOrder.Remove(currentLetter);
+            }
 
-        //    var prevOrder = _letters;
-        //    var reorderedLetters = "";
-        //    while (reorderedLetters.Length < _maxWordLength)
-        //    {
-        //        var ch = prevOrder[seed].ToString();
-        //        reorderedLetters += ch;
-        //        prevOrder = prevOrder.Replace(ch, "");
-        //    }
-
-        //    return reorderedLetters;
-        //}
+            return reorderedLetters;
+        }
     }
 }

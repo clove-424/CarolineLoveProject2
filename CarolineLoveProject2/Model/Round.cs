@@ -10,11 +10,11 @@ namespace CarolineLoveProject2.Model
         [JsonPropertyName("Round Number")]
         public int RoundNumber { get; set; }
 
-        [JsonPropertyName("Max Time")]
-        public int MaxTime { get; set; }
-
         [JsonPropertyName("Score")]
         public int Score { get; set; }
+
+        [JsonPropertyName("Max Time")]
+        public int MaxTime { get; set; }
 
         [JsonPropertyName("Valid Words")]
         public List<ValidWordTracker> SubmittedValidWords { get; set; }
@@ -22,6 +22,10 @@ namespace CarolineLoveProject2.Model
         [JsonPropertyName("Invalid Words")]
         public List<InvalidWordTracker> SubmittedInvalidWords { get; set; }
 
+        /// <summary>
+        /// Starts a new Round.
+        /// </summary>
+        /// <param name="validator">The validator.</param>
         public Round(Validator validator)
         {
             _validator = validator;
