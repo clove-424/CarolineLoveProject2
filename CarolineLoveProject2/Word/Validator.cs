@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Security.Cryptography;
+using System.Text.Json;
 
 namespace CarolineLoveProject2.Word
 {
@@ -24,7 +25,15 @@ namespace CarolineLoveProject2.Word
         /// <value>
         /// The submitted valid words.
         /// </value>
-        public List<string> SubmittedValidWords { get; set; }
+        public List<ValidWordTracker> ValidWords { get; set; }
+
+        /// <summary>
+        /// The submitted invalid words list property.
+        /// </summary>
+        /// <value>
+        /// The submitted invalid words.
+        /// </value>
+        public List<InvalidWordTracker> InvalidWords { get; set; }
 
         /// <summary>
         /// The property indicating whether a word is valid.
@@ -47,7 +56,8 @@ namespace CarolineLoveProject2.Word
         /// </summary>
         public Validator()
         {
-            SubmittedValidWords = [];
+            ValidWords = [];
+            InvalidWords = [];
 
             try
             {
@@ -90,7 +100,6 @@ namespace CarolineLoveProject2.Word
             {
                 if (WordIsValid(word, wordToCheck))
                 {
-                    SubmittedValidWords.Add(word);
                     IsValidWord = true;
 
                     break;
@@ -149,13 +158,13 @@ namespace CarolineLoveProject2.Word
         /// Checks if a word is in the list of submitted words.
         /// </summary>
         /// <param name="wordToCheck">The word to check.</param>
-        /// <returns>true if a value is in SubmittedValidWords; otherwise false</returns>
+        /// <returns>true if a value is in ValidWords; otherwise false</returns>
         public bool WordInSubmittedWords(string wordToCheck)
         {
             var inSubmittedWords = false;
-            foreach (var word in SubmittedValidWords)
+            foreach (var word in ValidWords)
             {
-                inSubmittedWords = WordsAreEqual(word, wordToCheck);
+                inSubmittedWords = WordsAreEqual(word.Word, wordToCheck);
                 if (inSubmittedWords)
                 {
                     break;

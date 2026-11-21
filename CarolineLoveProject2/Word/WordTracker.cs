@@ -1,6 +1,8 @@
-﻿namespace CarolineLoveProject2.Word
+﻿using System.Text.Json.Serialization;
+
+namespace CarolineLoveProject2.Word
 {
-    public class WordTracker
+    public abstract class WordTracker
     {
         /// <summary>
         /// The Word property.
@@ -8,53 +10,30 @@
         /// <value>
         /// The word.
         /// </value>
+        [JsonPropertyName("Word")]
         public string Word { get; set; }
 
         /// <summary>
-        /// The ReasonInvalid property.
+        /// The time the word was added property.
         /// </summary>
         /// <value>
-        /// The reason a word may be invalid, if it is.
+        /// The time added.
         /// </value>
-        public string? ReasonInvalid { get; set; }
-
-        /// <summary>
-        /// The PointsEarned property.
-        /// </summary>
-        /// <value>
-        /// The points earned per word.
-        /// </value>
-        public int PointsEarned { get; set; }
+        [JsonPropertyName("Time Word was Added")]
+        public int TimeAdded { get; set; }
 
         /// <summary>
         /// Initializes a new instance of a WordTracker.
         /// </summary>
         /// <param name="word">The word.</param>
-        /// <param name="reasonInvalid">The reason the word is invalid invalid.</param>
-        public WordTracker(string word, string reasonInvalid)
+        protected WordTracker(string word)
         {
             Word = word;
-            ReasonInvalid = reasonInvalid;
-
-            var pointsPerLetter = word.Length * 10;
-            if (word.Length < 3)
-            {
-                PointsEarned = 0;
-            }
-            else
-            {
-                PointsEarned = pointsPerLetter * word.Length;
-            }
         }
 
         public override string ToString()
         {
-            var output = $"Word: {Word}";
-            if (!string.IsNullOrEmpty(ReasonInvalid))
-            {
-                output += $" - Reason it's invalid: {ReasonInvalid}";
-            }
-            return output;
+            return $"Word: {Word}";
         }
     }
 }

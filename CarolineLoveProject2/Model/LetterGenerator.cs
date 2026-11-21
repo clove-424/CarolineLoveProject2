@@ -6,7 +6,11 @@
     /// </summary>
     public class LetterGenerator
     {
+        private const int _maxWordLength = 7;
+
         private Random? _rand;
+
+        private string? _letters;
 
         /// <summary>
         /// The letter bag property.
@@ -41,27 +45,25 @@
 
         /// <summary>
         /// Populates the list of chosen letters from the letter bag.
-        /// The value set for ChosenLetters guarantees the user gets at least one vowel.
+        /// The value set for ChosenLetters guarantees the player gets at least one vowel.
         /// </summary>
         public void PopulateChosenLetters()
         {
-            const int maxWordLength = 7;
-
             _rand = new();
 
-            var letters = "";
-            while (letters.Length < maxWordLength)
+            _letters = "";
+            while (_letters.Length < _maxWordLength)
             {
                 var index = _rand.Next(LetterBag.Count);
                 var currentLetter = LetterBag[index];
-                if (!letters.Contains(currentLetter))
+                if (!_letters.Contains(currentLetter))
                 {
-                    letters += currentLetter;
+                    _letters += currentLetter;
                 }
                 LetterBag.Remove(currentLetter);
             }
 
-            ChosenLetters = GetLettersSetWithVowels(letters);
+            ChosenLetters = GetLettersSetWithVowels(_letters);
         }
 
         private string GetLettersSetWithVowels(string letters)
@@ -85,17 +87,33 @@
                 }
             }
 
-            if (!vowelsFound)
+            if (vowelsFound)
             {
-                var lettersSeed = _rand.Next(letters.Length);
-                var vowelSeed = _rand.Next(vowels.Length);
-
-                var newString = letters.Replace(letters[lettersSeed], vowels[vowelSeed]);
-
-                return newString;
+                return letters;
             }
 
-            return letters;
+            var lettersSeed = _rand.Next(letters.Length);
+            var vowelSeed = _rand.Next(vowels.Length);
+
+            var newString = letters.Replace(letters[lettersSeed], vowels[vowelSeed]);
+
+            return newString;
         }
+
+        //public string TwistLetters()
+        //{
+        //    var seed = _rand.Next(_letters.Length);
+
+        //    var prevOrder = _letters;
+        //    var reorderedLetters = "";
+        //    while (reorderedLetters.Length < _maxWordLength)
+        //    {
+        //        var ch = prevOrder[seed].ToString();
+        //        reorderedLetters += ch;
+        //        prevOrder = prevOrder.Replace(ch, "");
+        //    }
+
+        //    return reorderedLetters;
+        //}
     }
 }

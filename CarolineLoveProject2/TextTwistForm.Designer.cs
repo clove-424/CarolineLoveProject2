@@ -40,15 +40,15 @@
             submitButton = new Button();
             notValidWordLabel = new Label();
             undoButton = new Button();
-            wordTrackerListBox = new ListBox();
             validWordsListBox = new ListBox();
             pointsEarnedLabel = new Label();
             timeRemainingLabel = new Label();
+            invalidWordsListBox = new ListBox();
             SuspendLayout();
             // 
             // letter1Button
             // 
-            letter1Button.Location = new Point(458, 206);
+            letter1Button.Location = new Point(55, 237);
             letter1Button.Margin = new Padding(3, 4, 3, 4);
             letter1Button.Name = "letter1Button";
             letter1Button.Size = new Size(30, 31);
@@ -58,7 +58,7 @@
             // 
             // letter2Button
             // 
-            letter2Button.Location = new Point(494, 206);
+            letter2Button.Location = new Point(91, 237);
             letter2Button.Margin = new Padding(3, 4, 3, 4);
             letter2Button.Name = "letter2Button";
             letter2Button.Size = new Size(30, 31);
@@ -68,7 +68,7 @@
             // 
             // letter3Button
             // 
-            letter3Button.Location = new Point(531, 206);
+            letter3Button.Location = new Point(128, 237);
             letter3Button.Margin = new Padding(3, 4, 3, 4);
             letter3Button.Name = "letter3Button";
             letter3Button.Size = new Size(30, 31);
@@ -78,7 +78,7 @@
             // 
             // letter4Button
             // 
-            letter4Button.Location = new Point(567, 206);
+            letter4Button.Location = new Point(164, 237);
             letter4Button.Margin = new Padding(3, 4, 3, 4);
             letter4Button.Name = "letter4Button";
             letter4Button.Size = new Size(30, 31);
@@ -88,7 +88,7 @@
             // 
             // letter5Button
             // 
-            letter5Button.Location = new Point(604, 206);
+            letter5Button.Location = new Point(201, 237);
             letter5Button.Margin = new Padding(3, 4, 3, 4);
             letter5Button.Name = "letter5Button";
             letter5Button.Size = new Size(30, 31);
@@ -98,7 +98,7 @@
             // 
             // letter6Button
             // 
-            letter6Button.Location = new Point(640, 206);
+            letter6Button.Location = new Point(237, 237);
             letter6Button.Margin = new Padding(3, 4, 3, 4);
             letter6Button.Name = "letter6Button";
             letter6Button.Size = new Size(30, 31);
@@ -108,7 +108,7 @@
             // 
             // letter7Button
             // 
-            letter7Button.Location = new Point(677, 206);
+            letter7Button.Location = new Point(274, 237);
             letter7Button.Margin = new Padding(3, 4, 3, 4);
             letter7Button.Name = "letter7Button";
             letter7Button.Size = new Size(30, 31);
@@ -118,7 +118,7 @@
             // 
             // activeWordTextBox
             // 
-            activeWordTextBox.Location = new Point(455, 172);
+            activeWordTextBox.Location = new Point(52, 203);
             activeWordTextBox.Margin = new Padding(3, 4, 3, 4);
             activeWordTextBox.Name = "activeWordTextBox";
             activeWordTextBox.ReadOnly = true;
@@ -128,7 +128,7 @@
             // 
             // clearTextBoxButton
             // 
-            clearTextBoxButton.Location = new Point(494, 265);
+            clearTextBoxButton.Location = new Point(91, 296);
             clearTextBoxButton.Margin = new Padding(3, 4, 3, 4);
             clearTextBoxButton.Name = "clearTextBoxButton";
             clearTextBoxButton.Size = new Size(75, 31);
@@ -139,7 +139,7 @@
             // 
             // submitButton
             // 
-            submitButton.Location = new Point(596, 265);
+            submitButton.Location = new Point(193, 296);
             submitButton.Name = "submitButton";
             submitButton.Size = new Size(75, 29);
             submitButton.TabIndex = 10;
@@ -150,7 +150,7 @@
             // notValidWordLabel
             // 
             notValidWordLabel.ForeColor = Color.Red;
-            notValidWordLabel.Location = new Point(455, 101);
+            notValidWordLabel.Location = new Point(52, 132);
             notValidWordLabel.Name = "notValidWordLabel";
             notValidWordLabel.Size = new Size(197, 67);
             notValidWordLabel.TabIndex = 11;
@@ -159,7 +159,7 @@
             // 
             // undoButton
             // 
-            undoButton.Location = new Point(640, 169);
+            undoButton.Location = new Point(237, 200);
             undoButton.Name = "undoButton";
             undoButton.Size = new Size(66, 29);
             undoButton.TabIndex = 12;
@@ -167,26 +167,18 @@
             undoButton.UseVisualStyleBackColor = true;
             undoButton.Click += UndoButton_Click;
             // 
-            // wordTrackerListBox
-            // 
-            wordTrackerListBox.FormattingEnabled = true;
-            wordTrackerListBox.Location = new Point(747, 71);
-            wordTrackerListBox.Name = "wordTrackerListBox";
-            wordTrackerListBox.Size = new Size(384, 344);
-            wordTrackerListBox.TabIndex = 13;
-            // 
             // validWordsListBox
             // 
             validWordsListBox.FormattingEnabled = true;
-            validWordsListBox.Location = new Point(33, 71);
+            validWordsListBox.Location = new Point(327, 58);
             validWordsListBox.Name = "validWordsListBox";
-            validWordsListBox.Size = new Size(384, 344);
+            validWordsListBox.Size = new Size(517, 164);
             validWordsListBox.TabIndex = 14;
             // 
             // pointsEarnedLabel
             // 
             pointsEarnedLabel.ForeColor = Color.FromArgb(0, 192, 0);
-            pointsEarnedLabel.Location = new Point(658, 136);
+            pointsEarnedLabel.Location = new Point(255, 167);
             pointsEarnedLabel.Name = "pointsEarnedLabel";
             pointsEarnedLabel.Size = new Size(48, 25);
             pointsEarnedLabel.TabIndex = 15;
@@ -195,21 +187,29 @@
             // 
             // timeRemainingLabel
             // 
-            timeRemainingLabel.Location = new Point(644, 101);
+            timeRemainingLabel.Location = new Point(255, 132);
             timeRemainingLabel.Name = "timeRemainingLabel";
-            timeRemainingLabel.Size = new Size(62, 25);
+            timeRemainingLabel.Size = new Size(48, 25);
             timeRemainingLabel.TabIndex = 16;
             timeRemainingLabel.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // invalidWordsListBox
+            // 
+            invalidWordsListBox.FormattingEnabled = true;
+            invalidWordsListBox.Location = new Point(327, 225);
+            invalidWordsListBox.Name = "invalidWordsListBox";
+            invalidWordsListBox.Size = new Size(517, 184);
+            invalidWordsListBox.TabIndex = 17;
             // 
             // TextTwistForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1165, 451);
+            ClientSize = new Size(904, 451);
+            Controls.Add(invalidWordsListBox);
             Controls.Add(timeRemainingLabel);
             Controls.Add(pointsEarnedLabel);
             Controls.Add(validWordsListBox);
-            Controls.Add(wordTrackerListBox);
             Controls.Add(undoButton);
             Controls.Add(notValidWordLabel);
             Controls.Add(submitButton);
@@ -241,9 +241,9 @@
         private Button submitButton;
         private Label notValidWordLabel;
         private Button undoButton;
-        private ListBox wordTrackerListBox;
         private ListBox validWordsListBox;
         private Label pointsEarnedLabel;
         private Label timeRemainingLabel;
+        private ListBox invalidWordsListBox;
     }
 }

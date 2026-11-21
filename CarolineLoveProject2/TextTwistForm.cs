@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using CarolineLoveProject2.Model;
 using CarolineLoveProject2.Word;
 using Timer = System.Windows.Forms.Timer;
@@ -17,8 +16,6 @@ namespace CarolineLoveProject2
         private readonly LetterGenerator _letterGenerator;
         private readonly Validator _validator;
 
-        private readonly List<WordTracker> _allSubmittedWords;
-
         private readonly List<Button> _letterButtons;
 
         /// <summary>
@@ -27,12 +24,6 @@ namespace CarolineLoveProject2
         public TextTwistForm()
         {
             InitializeComponent();
-
-            _appTimer = new();
-            _appTimer.Interval = 1000;
-            _appTimer.Tick += TimerOnTick;
-
-            StartTimer();
 
             _letterGenerator = new LetterGenerator();
             _letterGenerator.PopulateChosenLetters();
@@ -50,21 +41,35 @@ namespace CarolineLoveProject2
                 button.Text = letter.ToString();
             }
 
-            _allSubmittedWords = [];
-
             _validator = new();
             notValidWordLabel.Visible = false;
+
+            _appTimer = new();
+            _appTimer.Interval = 1000;
+            _appTimer.Tick += TimerOnTick;
+
+            StartRound();
         }
 
-        private void StartTimer()
+        private void StartRound()
         {
+            _validator.ValidWords.Clear();
+            validWordsListBox.DataSource = null;
+            validWordsListBox.Items.Clear();
+
+            _validator.InvalidWords.Clear();
+            invalidWordsListBox.DataSource = null;
+            invalidWordsListBox.Items.Clear();
+
+            CurrentlyPlayingGame(true);
+
             ResetTimer();
             _appTimer.Start();
         }
 
         private void ResetTimer()
         {
-            _currentTime = 120;
+            _currentTime = 60;  //TODO: dynamically set time to whatever player chooses
             timeRemainingLabel.Text = _currentTime.ToString();
         }
 
@@ -76,123 +81,73 @@ namespace CarolineLoveProject2
             if (_currentTime <= 0)
             {
                 _appTimer.Stop();
-                ChangeStateOfLetterButtons(false);
+                CurrentlyPlayingGame(false);
+                UpdateWordListBox();
             }
+        }
+
+        private void CurrentlyPlayingGame(bool inPlay)
+        {
+            undoButton.Enabled = inPlay;
+            submitButton.Enabled = inPlay;
+            clearTextBoxButton.Enabled = inPlay;
+            ChangeStateOfLetterButtons(inPlay);
+        }
+
+        private void ChangeStateOfLetterButtons(bool enabled)
+        {
+            foreach (var button in _letterButtons)
+            {
+                button.Enabled = enabled;
+            }
+        }
+
+        private void Letter1Button_Click(object sender, EventArgs e)
+        {
+            const int buttonIdx = 0;
+            AddToTextBox(buttonIdx);
+        }
+
+        private void Letter2Button_Click(object sender, EventArgs e)
+        {
+            const int buttonIdx = 1;
+            AddToTextBox(buttonIdx);
+        }
+
+        private void Letter3Button_Click(object sender, EventArgs e)
+        {
+            const int buttonIdx = 2;
+            AddToTextBox(buttonIdx);
+        }
+
+        private void Letter4Button_Click(object sender, EventArgs e)
+        {
+            const int buttonIdx = 3;
+            AddToTextBox(buttonIdx);
+        }
+
+        private void Letter5Button_Click(object sender, EventArgs e)
+        {
+            const int buttonIdx = 4;
+            AddToTextBox(buttonIdx);
+        }
+
+        private void Letter6Button_Click(object sender, EventArgs e)
+        {
+            const int buttonIdx = 5;
+            AddToTextBox(buttonIdx);
+        }
+
+        private void Letter7Button_Click(object sender, EventArgs e)
+        {
+            const int buttonIdx = 6;
+            AddToTextBox(buttonIdx);
         }
 
         private void AddToTextBox(int index)
         {
             activeWordTextBox.Text += _letterGenerator.ChosenLetters?[index].ToString();
             _letterButtons[index].Enabled = false;
-        }
-
-        private void ChangeStateOfLetterButtons(bool state)
-        {
-            foreach (var button in _letterButtons)
-            {
-                button.Enabled = state;
-            }
-        }
-        private void ClearTextBoxButton_Click(object sender, EventArgs e)
-        {
-            activeWordTextBox.Text = "";
-            ChangeStateOfLetterButtons(true);
-        }
-
-        private void Letter1Button_Click(object sender, EventArgs e)
-        {
-            const int firstButtonIdx = 0;
-            AddToTextBox(firstButtonIdx);
-        }
-
-        private void Letter2Button_Click(object sender, EventArgs e)
-        {
-            const int firstButtonIdx = 1;
-            AddToTextBox(firstButtonIdx);
-        }
-
-        private void Letter3Button_Click(object sender, EventArgs e)
-        {
-            const int firstButtonIdx = 2;
-            AddToTextBox(firstButtonIdx);
-        }
-
-        private void Letter4Button_Click(object sender, EventArgs e)
-        {
-            const int firstButtonIdx = 3;
-            AddToTextBox(firstButtonIdx);
-        }
-
-        private void Letter5Button_Click(object sender, EventArgs e)
-        {
-            const int firstButtonIdx = 4;
-            AddToTextBox(firstButtonIdx);
-        }
-
-        private void Letter6Button_Click(object sender, EventArgs e)
-        {
-            const int firstButtonIdx = 5;
-            AddToTextBox(firstButtonIdx);
-        }
-
-        private void Letter7Button_Click(object sender, EventArgs e)
-        {
-            const int firstButtonIdx = 6;
-            AddToTextBox(firstButtonIdx);
-        }
-
-        private void SubmitButton_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                var displayedWord = activeWordTextBox.Text;
-
-                if (!string.IsNullOrEmpty(displayedWord))
-                {
-                    var wordInvalidReason = GetReasonWordIsInvalid(displayedWord);
-                    AddWordToCollections(new WordTracker(displayedWord, wordInvalidReason));
-                }
-            }
-            catch (Exception)
-            {
-                notValidWordLabel.Text = "Please enter a valid word.";
-                notValidWordLabel.Visible = true;
-            }
-
-            activeWordTextBox.Text = "";
-            ChangeStateOfLetterButtons(true);
-            UpdateWordListBox();
-        }
-
-        private string GetReasonWordIsInvalid(string word)
-        {
-            var wordInvalidReason = "";
-            _validator.IterateOverLettersInDictionary(word);
-            if (word.Length < 3)
-            {
-                notValidWordLabel.Text = "Word is not long enough.";
-                wordInvalidReason = "Not Long Enough";
-            }
-            else if (!_validator.InDictionary)
-            {
-                notValidWordLabel.Text = "Not a valid word.";
-                wordInvalidReason = "Not Found in Dictionary";
-            }
-            else if (_validator.WordInSubmittedWords(word))
-            {
-                notValidWordLabel.Text = "Already submitted that word, \nsubmit another one.";
-                wordInvalidReason = "Duplicate Word";
-            }
-
-            return wordInvalidReason;
-        }
-
-        private void AddWordToCollections(WordTracker trackedWord)
-        {
-            _validator.Validate(trackedWord.Word);
-            _allSubmittedWords.Add(trackedWord);
-
-            notValidWordLabel.Visible = !_validator.IsValidWord;
         }
 
         private void UndoButton_Click(object sender, EventArgs e)
@@ -215,15 +170,100 @@ namespace CarolineLoveProject2
             }
         }
 
+        private void ClearTextBoxButton_Click(object sender, EventArgs e)
+        {
+            activeWordTextBox.Text = "";
+            ChangeStateOfLetterButtons(true);
+        }
+
+        private void SubmitButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var displayedWord = activeWordTextBox.Text;
+
+                if (!string.IsNullOrEmpty(displayedWord))
+                {
+                    ProcessWordData(displayedWord);
+                }
+            }
+            catch (Exception)
+            {
+                notValidWordLabel.Text = "Please enter a valid word.";
+                notValidWordLabel.Visible = true;
+            }
+
+            activeWordTextBox.Text = "";
+            ChangeStateOfLetterButtons(true);
+            UpdateWordListBox();
+        }
+
+        private void ProcessWordData(string word)
+        {
+            _validator.IterateOverLettersInDictionary(word);
+            _validator.Validate(word);
+
+            WordTracker wordToAdd;
+
+            var wordInvalidReason = GetReasonWordInvalid(word);
+            if (NotEligibleForPoints(word))
+            {
+                wordToAdd = new InvalidWordTracker(word, wordInvalidReason);
+                _validator.InvalidWords.Add((InvalidWordTracker)wordToAdd);
+
+                pointsEarnedLabel.Text = "";
+            }
+            else
+            {
+                wordToAdd = new ValidWordTracker(word);
+                _validator.ValidWords.Add((ValidWordTracker)wordToAdd);
+
+                var validWord = (ValidWordTracker)wordToAdd;
+                pointsEarnedLabel.Text = $"+{(validWord.PointValue)}";
+            }
+
+            wordToAdd.TimeAdded = _currentTime;
+
+            notValidWordLabel.Visible = !_validator.IsValidWord;
+        }
+
+        private string GetReasonWordInvalid(string word)
+        {
+            var wordInvalidReason = "";
+
+            if (word.Length < 3)
+            {
+                notValidWordLabel.Text = "Word is not long enough.";
+                wordInvalidReason = "Not Long Enough";
+            }
+            else if (!_validator.InDictionary)
+            {
+                notValidWordLabel.Text = "Not a valid word.";
+                wordInvalidReason = "Not Found in Dictionary";
+            }
+            else if (_validator.WordInSubmittedWords(word))
+            {
+                notValidWordLabel.Text = "Already submitted that word, \nsubmit another one.";
+                wordInvalidReason = "Duplicate Word";
+            }
+
+            return wordInvalidReason;
+        }
+
+        private bool NotEligibleForPoints(string word)
+        {
+            return !_validator.InDictionary || _validator.WordInSubmittedWords(word) || word.Length < 3;
+        }
+
         private void UpdateWordListBox()
         {
-            wordTrackerListBox.DataSource = null;
-            wordTrackerListBox.Items.Clear();
-            wordTrackerListBox.DataSource = _allSubmittedWords;
-
             validWordsListBox.DataSource = null;
             validWordsListBox.Items.Clear();
-            validWordsListBox.DataSource = _validator.SubmittedValidWords;
+            validWordsListBox.DataSource = _validator.ValidWords;
+
+            invalidWordsListBox.DataSource = null;
+            invalidWordsListBox.Items.Clear();
+            invalidWordsListBox.DataSource = _validator.InvalidWords;
         }
     }
 }
