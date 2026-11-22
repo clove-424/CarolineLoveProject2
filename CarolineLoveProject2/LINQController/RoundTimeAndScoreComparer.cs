@@ -11,7 +11,7 @@ namespace CarolineLoveProject2.LINQController
         /// <summary>
         /// Compares player 1 and player 2 scores and time.
         /// </summary>
-        /// <param name="player1">Player 1.</param>
+        /// <param name="player1">Player 1</param>
         /// <param name="player2">Player 2</param>
         /// <returns></returns>
         public int Compare(HighestScoreRound? player1, HighestScoreRound? player2)

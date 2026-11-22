@@ -23,6 +23,7 @@ namespace CarolineLoveProject2
 
         private readonly LetterGenerator _letterGenerator;
         private readonly Validator _validator;
+        private ChooseTimeForm? _chooseTimeForm;
 
         private List<Round> _rounds;
         private readonly List<HighestScoreRound> _highScoreBoard;
@@ -48,6 +49,7 @@ namespace CarolineLoveProject2
             ];
 
             _validator = new();
+            _chooseTimeForm = null;
 
             _rounds = [];
             _highScoreBoard = [];
@@ -96,10 +98,10 @@ namespace CarolineLoveProject2
 
         private void PromptPlayerForRoundTimeAndChangeStartTime()
         {
-            var chooseTimeForm = new ChooseTimeForm(_letterGenerator);
-            chooseTimeForm.ShowDialog();
+            _chooseTimeForm = new ChooseTimeForm(_letterGenerator);
+            _chooseTimeForm.ShowDialog();
 
-            _startTime = chooseTimeForm.StartTime;
+            _startTime = _chooseTimeForm.StartTime;
             if (_startTime > 0)
             {
                 AssignLettersToButtons(_letterGenerator.ChosenLetters);
@@ -160,6 +162,8 @@ namespace CarolineLoveProject2
                 _roundNumber++;
 
                 startButton.Text = "Start";
+                _startTime = _chooseTimeForm.StartTime;
+                timeRemainingLabel.Text = _startTime.ToString();
             }
         }
 
