@@ -172,7 +172,7 @@ namespace CarolineLoveProject2
             var player = new Round
             {
                 MaxTime = _startTime,
-                Score = CalculateRoundScore(),
+                Score = GetTotalScoreForRound(),
                 RoundNumber = _roundNumber
             };
 
@@ -185,10 +185,7 @@ namespace CarolineLoveProject2
                 AddPlayerToLeaderBoard(player, name);
 
                 _highScoreBoard.Sort(new RoundTimeAndScoreComparer());
-
-                leaderboardListBox.DataSource = null;
-                leaderboardListBox.Items.Clear();
-                leaderboardListBox.DataSource = _highScoreBoard;
+                RefreshLeaderboardListBox();
             }
 
             _rounds.Add(player);
@@ -428,7 +425,7 @@ namespace CarolineLoveProject2
                 var output = "Round Results:" + Environment.NewLine + Environment.NewLine;
 
                 output += SortedWordsToSummary() + Environment.NewLine;
-                output += "Total Score: " + CalculateRoundScore();
+                output += "Total Score: " + GetTotalScoreForRound();
 
                 roundSummaryTextBox.Text = output + Environment.NewLine;
             }
@@ -438,7 +435,8 @@ namespace CarolineLoveProject2
         {
             var allWords = CombineAllWordsToOneList();
             
-            var sortedWordsByPoints = allWords.OrderByDescending(points => points.PointValue)
+            var sortedWordsByPoints = allWords
+                .OrderByDescending(points => points.PointValue)
                 .ThenBy(word => word.Word);
 
             var output = "Word\t\tPoints" + Environment.NewLine;
@@ -466,7 +464,7 @@ namespace CarolineLoveProject2
             return allWords;
         }
 
-        private int CalculateRoundScore()
+        private int GetTotalScoreForRound()
         {
             var score = 0;
             foreach (var word in _validator.ValidWords)
@@ -519,14 +517,10 @@ namespace CarolineLoveProject2
             timeRemainingLabel.Text = DefaultTime.ToString();
 
             ClearTextFields();
-
             CurrentlyPlayingGame(false);
 
             _highScoreBoard.Clear();
-
-            leaderboardListBox.DataSource = null;
-            leaderboardListBox.Items.Clear();
-            leaderboardListBox.DataSource = _highScoreBoard;
+            RefreshLeaderboardListBox();
         }
 
         private void ResetLeaderboardMenuItem_Click(object sender, EventArgs e)
@@ -536,10 +530,7 @@ namespace CarolineLoveProject2
             if (result == DialogResult.Yes)
             {
                 _highScoreBoard.Clear();
-
-                leaderboardListBox.DataSource = null;
-                leaderboardListBox.Items.Clear();
-                leaderboardListBox.DataSource = _highScoreBoard;
+                RefreshLeaderboardListBox();
             }
         }
 
@@ -590,12 +581,24 @@ namespace CarolineLoveProject2
             _startTime = (from round in _rounds select round.MaxTime).Last();
             timeRemainingLabel.Text = _startTime.ToString();
 
-            var validWords = (from round in _rounds select round.SubmittedValidWords).Last().OrderByDescending(score => score.PointValue).ThenBy(word => word.Word);
-            var invalidWords = (from round in _rounds select round.SubmittedInvalidWords).Last().OrderBy(word => word.Word);
+            DisplayRoundSummary();
+
+            exportStatsMenuItem.Enabled = true;
+        }
+
+        private void DisplayRoundSummary()
+        {
+            var validWords = (from round in _rounds select round.SubmittedValidWords)
+                .Last()
+                .OrderByDescending(score => score.PointValue).ThenBy(word => word.Word);
+
+            var invalidWords = (from round in _rounds select round.SubmittedInvalidWords)
+                .Last()
+                .OrderBy(word => word.Word);
+            
             var points = (from score in _rounds select score.Score).Last();
 
             var roundSummary = "Word\t\tPoints" + Environment.NewLine + Environment.NewLine;
-
             foreach (var currentWord in validWords)
             {
                 roundSummary += $"{currentWord.Word}\t\t{currentWord.PointValue}" + Environment.NewLine;
@@ -605,12 +608,9 @@ namespace CarolineLoveProject2
             {
                 roundSummary += $"{currentWord.Word}\t\t0" + Environment.NewLine;
             }
-
             roundSummary += Environment.NewLine + $"Total Score: {points}";
 
             roundSummaryTextBox.Text = roundSummary;
-
-            exportStatsMenuItem.Enabled = true;
         }
 
         private void ExportStatsMenuItem_Click(object sender, EventArgs e)
@@ -648,6 +648,13 @@ namespace CarolineLoveProject2
             notValidWordLabel.Text = "";
             pointsEarnedLabel.Text = "";
             roundSummaryTextBox.Text = "";
+        }
+
+        private void RefreshLeaderboardListBox()
+        {
+            leaderboardListBox.DataSource = null;
+            leaderboardListBox.Items.Clear();
+            leaderboardListBox.DataSource = _highScoreBoard;
         }
     }
 }

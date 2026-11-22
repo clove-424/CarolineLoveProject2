@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CarolineLoveProject2.Dictionary.Dictionary" Collapsed="true">
+    <Position X="0.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Dictionary\Dictionary.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CarolineLoveProject2.LINQController.RoundTimeAndScoreComparer" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="10.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>LINQController\RoundTimeAndScoreComparer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="CarolineLoveProject2.Model.HighestScoreRound" Collapsed="true">
+    <Position X="7.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\HighestScoreRound.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CarolineLoveProject2.Model.LetterGenerator" Collapsed="true">
+    <Position X="0.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAQAAAQEAAAAACAEAAgACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\LetterGenerator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CarolineLoveProject2.Model.Round" Collapsed="true">
+    <Position X="7.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAhAAAAEAAgQAAAAAAAAAAAAAAAAgAAAAEAAAAA=</HashCode>
+      <FileName>Model\Round.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CarolineLoveProject2.View.ChooseTimeForm" Collapsed="true">
+    <Position X="13.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAACAAABAAAQCAAQADJAAAAAUAAAAAAAAAAAA=</HashCode>
+      <FileName>View\ChooseTimeForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CarolineLoveProject2.View.NameInputForm" Collapsed="true">
+    <Position X="13.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEACAQAAAAAACAAAACCAAAAAAAAABAACAAAAA=</HashCode>
+      <FileName>View\NameInputForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CarolineLoveProject2.Word.InvalidWordTracker" Collapsed="true">
+    <Position X="4.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Word\InvalidWordTracker.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CarolineLoveProject2.Word.Validator" Collapsed="true">
+    <Position X="6.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAACACBAEAIgAAIgAgAAAAAAAAAAAAAAEGAAAA=</HashCode>
+      <FileName>Word\Validator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CarolineLoveProject2.Word.ValidWordTracker" Collapsed="true">
+    <Position X="2.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAgAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Word\ValidWordTracker.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CarolineLoveProject2.Word.WordTracker" Collapsed="true">
+    <Position X="3.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAEAAAAAQAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Word\WordTracker.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CarolineLoveProject2.Program" Collapsed="true">
+    <Position X="15.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CarolineLoveProject2.TextTwistForm" Collapsed="true">
+    <Position X="13.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>zLCTABgAYCCWcAQotv6TQQIiAUCcCAl5AiFAESAQYEI=</HashCode>
+      <FileName>TextTwistForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
