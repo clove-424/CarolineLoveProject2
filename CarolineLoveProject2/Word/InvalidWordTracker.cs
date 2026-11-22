@@ -16,7 +16,14 @@ namespace CarolineLoveProject2.Word
         /// </value>
         [JsonPropertyName("Reason")]
         [JsonPropertyOrder(2)]
-        public string ReasonInvalid { get; set; }
+        public string? ReasonInvalid { get; set; }
+
+        /// <summary>
+        /// The default constructor that is not meant to be called.
+        /// </summary>
+        public InvalidWordTracker()
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of an InvalidWordTracker.

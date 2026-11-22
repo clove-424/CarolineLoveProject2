@@ -4,7 +4,6 @@ using CarolineLoveProject2.View;
 using CarolineLoveProject2.Word;
 using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Xml.Linq;
 using Timer = System.Windows.Forms.Timer;
 
 namespace CarolineLoveProject2
@@ -15,6 +14,8 @@ namespace CarolineLoveProject2
     /// <seealso cref="System.Windows.Forms.Form" />
     public partial class TextTwistForm : Form
     {
+        private const int DefaultTime = 60;
+
         private readonly Timer _appTimer;
         private int _startTime;
         private int _currentTime;
@@ -23,8 +24,8 @@ namespace CarolineLoveProject2
         private readonly LetterGenerator _letterGenerator;
         private readonly Validator _validator;
 
-        private readonly List<Round> _rounds;
-        private List<HighestScoreRound> _highScoreBoard;
+        private List<Round> _rounds;
+        private readonly List<HighestScoreRound> _highScoreBoard;
 
         private bool _inPlay;
 
@@ -58,19 +59,23 @@ namespace CarolineLoveProject2
             ResetGameState();
 
             _inPlay = false;
-            _startTime = 60;
+            _startTime = DefaultTime;
             _currentTime = _startTime;
         }
 
         private void StartButton_Click(object sender, EventArgs e)
         {
+            CurrentlyPlayingGame(true);
             if (startButton.Text == "New")
             {
                 _appTimer.Stop();
                 var result = MessageBox.Show("Do you want a new puzzle?", "Information", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                 if (result == DialogResult.Yes)
                 {
-                    PromptPlayerForRoundTimeAndStart();
+                    AssignLettersToButtons(_letterGenerator.ChosenLetters);
+
+                    _currentTime = _startTime;
+                    StartRound(_currentTime);
                 }
                 else
                 {
@@ -84,7 +89,12 @@ namespace CarolineLoveProject2
             }
         }
 
-        private void PromptPlayerForRoundTimeAndStart()
+        private void SetTimeMenuItem_Click(object sender, EventArgs e)
+        {
+            PromptPlayerForRoundTimeAndChangeStartTime();
+        }
+
+        private void PromptPlayerForRoundTimeAndChangeStartTime()
         {
             var chooseTimeForm = new ChooseTimeForm(_letterGenerator);
             chooseTimeForm.ShowDialog();
@@ -94,14 +104,16 @@ namespace CarolineLoveProject2
             {
                 AssignLettersToButtons(_letterGenerator.ChosenLetters);
 
+                _appTimer.Stop();
                 _currentTime = _startTime;
-                StartRound(_currentTime);
-            }
-        }
+                timeRemainingLabel.Text = _currentTime.ToString();
 
-        private void SetTimeMenuItem_Click(object sender, EventArgs e)
-        {
-            PromptPlayerForRoundTimeAndStart();
+                startButton.Text = "Start";
+                pointsEarnedLabel.Text = "";
+                notValidWordLabel.Text = "";
+
+                CurrentlyPlayingGame(false);
+            }
         }
 
         private void StartRound(int time)
@@ -120,7 +132,6 @@ namespace CarolineLoveProject2
             activeWordTextBox.Text = "";
             pointsEarnedLabel.Text = "";
             notValidWordLabel.Text = "";
-            CurrentlyPlayingGame(true);
 
             timeRemainingLabel.Text = time.ToString();
             _appTimer.Start();
@@ -128,11 +139,16 @@ namespace CarolineLoveProject2
 
         private void TimerOnTick(object? sender, EventArgs e)
         {
+            importDataMenuItem.Enabled = false;
+            exportStatsMenuItem.Enabled = false;
+
             _currentTime--;
             timeRemainingLabel.Text = _currentTime.ToString();
 
             if (_currentTime <= 0)
             {
+                importDataMenuItem.Enabled = true;
+                exportStatsMenuItem.Enabled = true;
                 _appTimer.Stop();
                 CurrentlyPlayingGame(false);
 
@@ -149,7 +165,7 @@ namespace CarolineLoveProject2
 
         private void UpdateHighScoreBoard()
         {
-            var player = new Round(_validator)
+            var player = new Round
             {
                 MaxTime = _startTime,
                 Score = CalculateRoundScore(),
@@ -163,7 +179,7 @@ namespace CarolineLoveProject2
 
                 var name = nameInput.NameInput;
                 AddPlayerToLeaderBoard(player, name);
-                
+
                 _highScoreBoard.Sort(new RoundTimeAndScoreComparer());
 
                 leaderboardListBox.DataSource = null;
@@ -172,14 +188,14 @@ namespace CarolineLoveProject2
             }
 
             _rounds.Add(player);
-            player.SaveSubmittedWords();
+            player.SaveSubmittedWords(_validator);
         }
 
-        private void AddPlayerToLeaderBoard(Round player, string name)
+        private void AddPlayerToLeaderBoard(Round player, string? name)
         {
             if (!string.IsNullOrEmpty(name))
             {
-                player = new HighestScoreRound(_validator)
+                player = new HighestScoreRound
                 {
                     PlayerName = name,
                     Score = player.Score,
@@ -196,7 +212,7 @@ namespace CarolineLoveProject2
             var isHighScore = false;
 
             var leaderboard = (from player in _highScoreBoard select player.Score).ToList();
-            if (leaderboard.Count <= 0 || _rounds.Count <= 0) 
+            if (leaderboard.Count <= 0 || _rounds.Count <= 0)
             {
                 isHighScore = true;
                 return isHighScore;
@@ -277,7 +293,7 @@ namespace CarolineLoveProject2
 
         private void AddToTextBox(int index)
         {
-            activeWordTextBox.Text += _letterGenerator.ChosenLetters?[index].ToString();
+            activeWordTextBox.Text += _letterGenerator.ChosenLetters[index].ToString();
             _letterButtons[index].Enabled = false;
         }
 
@@ -401,9 +417,7 @@ namespace CarolineLoveProject2
 
         private void PopulateRoundSummaryTextbox()
         {
-            pointsEarnedLabel.Text = "";
-            notValidWordLabel.Text = "";
-            activeWordTextBox.Text = "";
+            ClearTextFields();
 
             if (!_inPlay)
             {
@@ -418,7 +432,24 @@ namespace CarolineLoveProject2
 
         private string SortedWordsToSummary()
         {
+            var allWords = CombineAllWordsToOneList();
+            
+            var sortedWordsByPoints = allWords.OrderByDescending(points => points.PointValue)
+                .ThenBy(word => word.Word);
+
+            var output = "Word\t\tPoints" + Environment.NewLine;
+            foreach (var currentWord in sortedWordsByPoints)
+            {
+                output += $"{currentWord.Word}\t\t{currentWord.PointValue}" + Environment.NewLine;
+            }
+
+            return output;
+        }
+
+        private List<(string Word, int PointValue)> CombineAllWordsToOneList()
+        {
             List<(string Word, int PointValue)> allWords = [];
+
             foreach (var word in _validator.ValidWords)
             {
                 allWords.Add(new(word.Word, word.PointValue));
@@ -428,16 +459,7 @@ namespace CarolineLoveProject2
                 allWords.Add(new(word.Word, 0));
             }
 
-            var sortedWordsByPoints = allWords.OrderByDescending(points => points.PointValue)
-                .ThenBy(word => word.Word);
-
-            var output = "Word\tPoints Earned" + Environment.NewLine;
-            foreach (var currentWord in sortedWordsByPoints)
-            {
-                output += $"{currentWord.Word}\t\t{currentWord.PointValue}" + Environment.NewLine;
-            }
-
-            return output;
+            return allWords;
         }
 
         private int CalculateRoundScore()
@@ -449,6 +471,142 @@ namespace CarolineLoveProject2
             }
 
             return score;
+        }
+
+        private void AssignLettersToButtons(string chosenLetters)
+        {
+            for (var i = 0; i < _letterButtons.Count; i++)
+            {
+                var button = _letterButtons[i];
+                var letter = chosenLetters[i];
+                button.Text = letter.ToString();
+            }
+        }
+
+        private void ExitMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void NewGameMenuItem_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show("Are you sure you want to start a new game? Your data from previous rounds will be lost.",
+                    "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (result == DialogResult.Yes)
+            {
+                ResetGameState();
+                _rounds.Clear();
+                _appTimer.Stop();
+            }
+        }
+
+        private void ResetGameState()
+        {
+            _startTime = DefaultTime;
+            _currentTime = _startTime;
+
+            startButton.Text = "Start";
+
+            _roundNumber = 1;
+
+            _letterGenerator.PopulateChosenLetters();
+            AssignLettersToButtons(_letterGenerator.ChosenLetters);
+
+            timeRemainingLabel.Text = DefaultTime.ToString();
+
+            ClearTextFields();
+
+            CurrentlyPlayingGame(false);
+
+            _highScoreBoard.Clear();
+
+            leaderboardListBox.DataSource = null;
+            leaderboardListBox.Items.Clear();
+            leaderboardListBox.DataSource = _highScoreBoard;
+        }
+
+        private void ResetLeaderboardMenuItem_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show("Are you sure you want to reset the leaderboard?", "Warning",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (result == DialogResult.Yes)
+            {
+                _highScoreBoard.Clear();
+
+                leaderboardListBox.DataSource = null;
+                leaderboardListBox.Items.Clear();
+                leaderboardListBox.DataSource = _highScoreBoard;
+            }
+        }
+
+        private void ImportDataMenuItem_Click(object sender, EventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "JSON files (*.json)|*.json";
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    var filePath = openFileDialog.FileName;
+                    var json = File.ReadAllText(filePath);
+                    _rounds = JsonSerializer.Deserialize<List<Round>>(json) ?? [];
+
+                    var message = $"Successfully imported {_rounds.Count} ";
+                    if (_rounds.Count == 1)
+                    {
+                        message += "round";
+                    }
+                    else
+                    {
+                        message += "rounds";
+                    }
+                    MessageBox.Show(message, "Information", MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+
+                    SetRecentGameState();
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Failure Reading File. \nCreating a new game instead.", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    timeRemainingLabel.Text = DefaultTime.ToString();
+                }
+            }
+        }
+
+        private void SetRecentGameState()
+        {
+            ClearTextFields();
+
+            var roundNumber = (from round in _rounds select round.RoundNumber).Last();
+            _roundNumber = roundNumber + 1;
+
+            _startTime = (from round in _rounds select round.MaxTime).Last();
+            timeRemainingLabel.Text = _startTime.ToString();
+
+            var validWords = (from round in _rounds select round.SubmittedValidWords).Last().OrderByDescending(score => score.PointValue).ThenBy(word => word.Word);
+            var invalidWords = (from round in _rounds select round.SubmittedInvalidWords).Last().OrderBy(word => word.Word);
+            var points = (from score in _rounds select score.Score).Last();
+
+            var roundSummary = "Word\t\tPoints" + Environment.NewLine + Environment.NewLine;
+
+            foreach (var currentWord in validWords)
+            {
+                roundSummary += $"{currentWord.Word}\t\t{currentWord.PointValue}" + Environment.NewLine;
+            }
+
+            foreach (var currentWord in invalidWords)
+            {
+                roundSummary += $"{currentWord.Word}\t\t0" + Environment.NewLine;
+            }
+
+            roundSummary += Environment.NewLine + $"Total Score: {points}";
+
+            roundSummaryTextBox.Text = roundSummary;
+
+            exportStatsMenuItem.Enabled = true;
         }
 
         private void ExportStatsMenuItem_Click(object sender, EventArgs e)
@@ -481,55 +639,11 @@ namespace CarolineLoveProject2
             }
         }
 
-        private void AssignLettersToButtons(string chosenLetters)
+        private void ClearTextFields()
         {
-            for (var i = 0; i < _letterButtons.Count; i++)
-            {
-                var button = _letterButtons[i];
-                var letter = chosenLetters[i];
-                button.Text = letter.ToString();
-            }
-        }
-
-        private void ExitMenuItem_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
-        private void NewGameMenuItem_Click(object sender, EventArgs e)
-        {
-            var result = MessageBox.Show("Are you sure you want to start a new game? Your data from previous rounds will be lost.",
-                    "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-            if (result == DialogResult.Yes)
-            {
-                ResetGameState();
-                _rounds.Clear();
-            }
-        }
-
-        private void ResetGameState()
-        {
-            _startTime = 60;
-            _currentTime = _startTime;
-
-            startButton.Text = "Start";
-
-            _appTimer.Stop();
-
-            _roundNumber = 1;
-
-            _letterGenerator.PopulateChosenLetters();
-            AssignLettersToButtons(_letterGenerator.ChosenLetters);
-
-            timeRemainingLabel.Text = "60";
-
             notValidWordLabel.Text = "";
             pointsEarnedLabel.Text = "";
             roundSummaryTextBox.Text = "";
-
-            CurrentlyPlayingGame(false);
-
-            _highScoreBoard = [];
         }
     }
 }

@@ -28,6 +28,14 @@ namespace CarolineLoveProject2.Word
         public int TimeAdded { get; set; }
 
         /// <summary>
+        /// The default constructor that is not meant to be called.
+        /// </summary>
+        protected WordTracker()
+        {
+            Word = string.Empty;
+        }
+
+        /// <summary>
         /// Initializes a new instance of a WordTracker.
         /// </summary>
         /// <param name="word">The word.</param>

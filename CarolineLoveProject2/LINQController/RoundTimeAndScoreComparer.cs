@@ -15,10 +15,15 @@ namespace CarolineLoveProject2.LINQController
         /// <param name="player2">Player 2</param>
         /// <returns></returns>
         public int Compare(HighestScoreRound? player1, HighestScoreRound? player2)
-        { 
-            return player2.MaxTime > player1.MaxTime
+        {
+            if (player1 != null && player2 != null)
+            {
+                return player2.MaxTime > player1.MaxTime
                     ? player1.MaxTime.CompareTo(player2.MaxTime)
                     : player2.Score.CompareTo(player1.Score);
+            }
+
+            return -1;
         }
     }
 }

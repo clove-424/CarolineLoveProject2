@@ -45,10 +45,12 @@
             roundSummaryTextBox = new RichTextBox();
             textTwistMainMenuStrip = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
+            importDataMenuItem = new ToolStripMenuItem();
             exportStatsMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
             optionsToolStripMenuItem = new ToolStripMenuItem();
             changeTimeMenuItem = new ToolStripMenuItem();
+            resetLeaderboardToolStripMenuItem = new ToolStripMenuItem();
             newGameMenuItem = new ToolStripMenuItem();
             startButton = new Button();
             textTwistButton = new Button();
@@ -213,29 +215,36 @@
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { exportStatsMenuItem, exitToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { importDataMenuItem, exportStatsMenuItem, exitToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new Size(37, 20);
             fileToolStripMenuItem.Text = "File";
+            // 
+            // importDataMenuItem
+            // 
+            importDataMenuItem.Name = "importDataMenuItem";
+            importDataMenuItem.Size = new Size(137, 22);
+            importDataMenuItem.Text = "Import Data";
+            importDataMenuItem.Click += ImportDataMenuItem_Click;
             // 
             // exportStatsMenuItem
             // 
             exportStatsMenuItem.Enabled = false;
             exportStatsMenuItem.Name = "exportStatsMenuItem";
-            exportStatsMenuItem.Size = new Size(135, 22);
+            exportStatsMenuItem.Size = new Size(137, 22);
             exportStatsMenuItem.Text = "Export Stats";
             exportStatsMenuItem.Click += ExportStatsMenuItem_Click;
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new Size(135, 22);
+            exitToolStripMenuItem.Size = new Size(137, 22);
             exitToolStripMenuItem.Text = "Exit";
             exitToolStripMenuItem.Click += ExitMenuItem_Click;
             // 
             // optionsToolStripMenuItem
             // 
-            optionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { changeTimeMenuItem, newGameMenuItem });
+            optionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { changeTimeMenuItem, resetLeaderboardToolStripMenuItem, newGameMenuItem });
             optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             optionsToolStripMenuItem.Size = new Size(61, 20);
             optionsToolStripMenuItem.Text = "Options";
@@ -246,6 +255,13 @@
             changeTimeMenuItem.Size = new Size(186, 22);
             changeTimeMenuItem.Text = "Set Countdown Time";
             changeTimeMenuItem.Click += SetTimeMenuItem_Click;
+            // 
+            // resetLeaderboardToolStripMenuItem
+            // 
+            resetLeaderboardToolStripMenuItem.Name = "resetLeaderboardToolStripMenuItem";
+            resetLeaderboardToolStripMenuItem.Size = new Size(186, 22);
+            resetLeaderboardToolStripMenuItem.Text = "Reset Leaderboard";
+            resetLeaderboardToolStripMenuItem.Click += ResetLeaderboardMenuItem_Click;
             // 
             // newGameMenuItem
             // 
@@ -295,18 +311,18 @@
             // leaderboardListBox
             // 
             leaderboardListBox.FormattingEnabled = true;
-            leaderboardListBox.Location = new Point(165, 282);
+            leaderboardListBox.Location = new Point(160, 279);
             leaderboardListBox.Name = "leaderboardListBox";
-            leaderboardListBox.Size = new Size(316, 169);
+            leaderboardListBox.Size = new Size(326, 169);
             leaderboardListBox.TabIndex = 21;
             // 
             // leaderboardHeaderTextBox
             // 
-            leaderboardHeaderTextBox.Location = new Point(165, 258);
+            leaderboardHeaderTextBox.Location = new Point(160, 255);
             leaderboardHeaderTextBox.Name = "leaderboardHeaderTextBox";
             leaderboardHeaderTextBox.ReadOnly = true;
-            leaderboardHeaderTextBox.Size = new Size(316, 23);
-            leaderboardHeaderTextBox.TabIndex = 22;
+            leaderboardHeaderTextBox.Size = new Size(326, 23);
+            leaderboardHeaderTextBox.TabIndex = 20;
             // 
             // TextTwistForm
             // 
@@ -374,5 +390,7 @@
         private Label summaryLabel;
         private ListBox leaderboardListBox;
         private TextBox leaderboardHeaderTextBox;
+        private ToolStripMenuItem resetLeaderboardToolStripMenuItem;
+        private ToolStripMenuItem importDataMenuItem;
     }
 }

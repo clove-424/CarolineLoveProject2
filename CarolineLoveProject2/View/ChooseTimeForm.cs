@@ -32,25 +32,23 @@ namespace CarolineLoveProject2.View
         private void OneMinuteButton_Click(object sender, EventArgs e)
         {
             StartTime = 60;
-
-            _letterGenerator.PopulateChosenLetters();
-
-            Close();
+            PopulateThenClose();
         }
 
         private void TwoMinuteButton_Click(object sender, EventArgs e)
         {
             StartTime = 120;
-
-            _letterGenerator.PopulateChosenLetters();
-
-            Close();
+            PopulateThenClose();
         }
 
         private void ThreeMinuteButton_Click(object sender, EventArgs e)
         {
             StartTime = 180;
+            PopulateThenClose();
+        }
 
+        private void PopulateThenClose()
+        {
             _letterGenerator.PopulateChosenLetters();
 
             Close();

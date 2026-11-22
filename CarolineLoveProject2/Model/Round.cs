@@ -14,7 +14,8 @@ namespace CarolineLoveProject2.Model
         /// <value>
         /// The validator.
         /// </value>
-        protected Validator Validator { get; set; }
+        [JsonIgnore]
+        protected Validator? Validator { get; set; }
 
         /// <summary>
         /// The RoundNumber property.
@@ -23,6 +24,7 @@ namespace CarolineLoveProject2.Model
         /// The round number.
         /// </value>
         [JsonPropertyName("Round Number")]
+        [JsonPropertyOrder(1)]
         public int RoundNumber { get; set; }
 
         /// <summary>
@@ -32,6 +34,7 @@ namespace CarolineLoveProject2.Model
         /// The score.
         /// </value>
         [JsonPropertyName("Score")]
+        [JsonPropertyOrder(2)]
         public int Score { get; set; }
 
         /// <summary>
@@ -41,6 +44,7 @@ namespace CarolineLoveProject2.Model
         /// The maximum time.
         /// </value>
         [JsonPropertyName("Maximum Time")]
+        [JsonPropertyOrder(3)]
         public int MaxTime { get; set; }
 
         /// <summary>
@@ -50,7 +54,8 @@ namespace CarolineLoveProject2.Model
         /// The submitted valid words.
         /// </value>
         [JsonPropertyName("Valid Words")]
-        public List<ValidWordTracker> SubmittedValidWords { get; set; }
+        [JsonPropertyOrder(4)]
+        public List<ValidWordTracker>? SubmittedValidWords { get; set; } = [];
 
         /// <summary>
         /// The SubmittedInvalidWords property.
@@ -59,27 +64,21 @@ namespace CarolineLoveProject2.Model
         /// The submitted invalid words.
         /// </value>
         [JsonPropertyName("Invalid Words")]
-        public List<InvalidWordTracker> SubmittedInvalidWords { get; set; }
-
-        /// <summary>
-        /// Starts a new Round.
-        /// </summary>
-        /// <param name="validator">The validator.</param>
-        public Round(Validator validator)
-        {
-            Validator = validator;
-
-            SubmittedValidWords = [];
-            SubmittedInvalidWords = [];
-        }
+        [JsonPropertyOrder(5)]
+        public List<InvalidWordTracker>? SubmittedInvalidWords { get; set; } = [];
 
         /// <summary>
         /// Saves the submitted words into the round.
         /// </summary>
-        public void SaveSubmittedWords()
+        public void SaveSubmittedWords(Validator validator)
         {
-            SubmittedValidWords.AddRange(Validator.ValidWords);
-            SubmittedInvalidWords.AddRange(Validator.InvalidWords);
+            Validator = validator;
+
+            if (SubmittedValidWords != null && SubmittedInvalidWords != null)
+            {
+                SubmittedValidWords.AddRange(Validator.ValidWords);
+                SubmittedInvalidWords.AddRange(Validator.InvalidWords);
+            }
         }
     }
 }

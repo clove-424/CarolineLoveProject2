@@ -1,23 +1,20 @@
-﻿using CarolineLoveProject2.Word;
-using System.Numerics;
-
+﻿using System.Text.Json.Serialization;
 namespace CarolineLoveProject2.Model
 {
+    /// <summary>
+    /// The class that tracks a player's stats including their name or initials in the leaderboard.
+    /// </summary>
+    /// <seealso cref="CarolineLoveProject2.Model.Round" />
     public class HighestScoreRound : Round
     {
-        public string PlayerName { get; set; }
-
-        public HighestScoreRound(Validator validator) : base(validator)
-        {
-            Validator = validator;
-
-            PlayerName = "";
-        }
-
-        public HighestScoreRound(Validator validator, string playerName) : this(validator)
-        {
-            PlayerName = playerName;
-        }
+        /// <summary>
+        /// The PlayerName property.
+        /// </summary>
+        /// <value>
+        /// The name of the player.
+        /// </value>
+        [JsonIgnore]
+        public string PlayerName { get; set; } = "";
 
         public override string ToString()
         {
