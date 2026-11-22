@@ -2,6 +2,10 @@
 
 namespace CarolineLoveProject2.Word
 {
+    /// <summary>
+    /// The invalid word tracker that is a type of word tracker.
+    /// </summary>
+    /// <seealso cref="CarolineLoveProject2.Word.WordTracker" />
     public class InvalidWordTracker : WordTracker
     {
         /// <summary>

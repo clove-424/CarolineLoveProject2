@@ -35,6 +35,7 @@
         {
             _rand = new();
             _letters = "";
+            ChosenLetters = "";
 
             LetterBag = ["j","k","q","x","z","b","b","c","c","f",
                 "f","g","g","m","m","p","p","v","v","d","d","d","u",
@@ -102,6 +103,10 @@
             return newString;
         }
 
+        /// <summary>
+        /// Twists the letters.
+        /// </summary>
+        /// <returns>The reordered letters</returns>
         public string TwistLetters()
         {
             var prevOrder = _letters.ToList();

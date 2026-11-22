@@ -31,11 +31,12 @@
             oneMinuteButton = new Button();
             twoMinuteButton = new Button();
             threeMinuteButton = new Button();
+            label1 = new Label();
             SuspendLayout();
             // 
             // oneMinuteButton
             // 
-            oneMinuteButton.Location = new Point(49, 72);
+            oneMinuteButton.Location = new Point(52, 82);
             oneMinuteButton.Name = "oneMinuteButton";
             oneMinuteButton.Size = new Size(69, 23);
             oneMinuteButton.TabIndex = 0;
@@ -45,7 +46,7 @@
             // 
             // twoMinuteButton
             // 
-            twoMinuteButton.Location = new Point(124, 72);
+            twoMinuteButton.Location = new Point(127, 82);
             twoMinuteButton.Name = "twoMinuteButton";
             twoMinuteButton.Size = new Size(69, 23);
             twoMinuteButton.TabIndex = 1;
@@ -55,7 +56,7 @@
             // 
             // threeMinuteButton
             // 
-            threeMinuteButton.Location = new Point(199, 72);
+            threeMinuteButton.Location = new Point(202, 82);
             threeMinuteButton.Name = "threeMinuteButton";
             threeMinuteButton.Size = new Size(69, 23);
             threeMinuteButton.TabIndex = 2;
@@ -63,17 +64,29 @@
             threeMinuteButton.UseVisualStyleBackColor = true;
             threeMinuteButton.Click += ThreeMinuteButton_Click;
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(73, 50);
+            label1.Name = "label1";
+            label1.Size = new Size(176, 15);
+            label1.TabIndex = 3;
+            label1.Text = "How long should this round be?";
+            // 
             // ChooseTimeForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(327, 160);
+            ControlBox = false;
+            Controls.Add(label1);
             Controls.Add(threeMinuteButton);
             Controls.Add(twoMinuteButton);
             Controls.Add(oneMinuteButton);
             Name = "ChooseTimeForm";
-            Text = "ChooseTimeForm";
+            Text = "Choose Starting Time";
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -81,5 +94,6 @@
         private Button oneMinuteButton;
         private Button twoMinuteButton;
         private Button threeMinuteButton;
+        private Label label1;
     }
 }

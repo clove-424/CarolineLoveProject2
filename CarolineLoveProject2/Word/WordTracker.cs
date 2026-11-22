@@ -2,6 +2,9 @@
 
 namespace CarolineLoveProject2.Word
 {
+    /// <summary>
+    /// The generic word tracker class.
+    /// </summary>
     public abstract class WordTracker
     {
         /// <summary>

@@ -1,29 +1,58 @@
-﻿namespace CarolineLoveProject2.View
+﻿using CarolineLoveProject2.Model;
+
+namespace CarolineLoveProject2.View
 {
+    /// <summary>
+    /// The class for the ChooseTimeForm that decides how long a round goes on.
+    /// </summary>
+    /// <seealso cref="System.Windows.Forms.Form" />
     public partial class ChooseTimeForm : Form
     {
-        public int CurrentTime { get; private set; }
+        private readonly LetterGenerator _letterGenerator;
 
-        public ChooseTimeForm()
+        /// <summary>
+        /// The StartTime property.
+        /// </summary>
+        /// <value>
+        /// The current time.
+        /// </value>
+        public int StartTime { get; private set; }
+
+        /// <summary>
+        /// Initializes a new instance of a ChooseTimeForm.
+        /// </summary>
+        /// <param name="letterGenerator">The letter generator.</param>
+        public ChooseTimeForm(LetterGenerator letterGenerator)
         {
             InitializeComponent();
+
+            _letterGenerator = letterGenerator;
         }
 
         private void OneMinuteButton_Click(object sender, EventArgs e)
         {
-            CurrentTime = 60;
+            StartTime = 60;
+
+            _letterGenerator.PopulateChosenLetters();
+
             Close();
         }
 
         private void TwoMinuteButton_Click(object sender, EventArgs e)
         {
-            CurrentTime = 120;
+            StartTime = 120;
+
+            _letterGenerator.PopulateChosenLetters();
+
             Close();
         }
 
         private void ThreeMinuteButton_Click(object sender, EventArgs e)
         {
-            CurrentTime = 180;
+            StartTime = 180;
+
+            _letterGenerator.PopulateChosenLetters();
+
             Close();
         }
     }
